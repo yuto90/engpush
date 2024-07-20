@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "384792588963",
+    "project_id": "engpush-31385",
+    "storage_bucket": "engpush-31385.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:384792588963:android:5c2f54bdaf65c818fd4516",
+        "android_client_info": {
+          "package_name": "com.engpushe.engpush"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyC6Py1d6GVWaZE2KuZpZAyQlq4fvyRAw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
