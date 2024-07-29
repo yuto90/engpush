@@ -12,6 +12,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'view/home.dart';
+
 // バックグラウンドメッセージハンドラ
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -35,12 +37,22 @@ Future<void> _registerDeviceToken(String fcmToken) async {
   String deviceId;
 
   if (Platform.isAndroid) {
-    deviceId = getAndroidId() as String;
+    deviceId = await getAndroidId() as String;
   } else if (Platform.isIOS) {
     final iosInfo = await deviceInfo.iosInfo;
     deviceId = iosInfo.identifierForVendor!;
   } else {
     throw UnsupportedError('Unsupported platform');
+  }
+
+  // SharedPreferencesからエンドポイントARNを読み込む
+  final prefs = await SharedPreferences.getInstance();
+  final savedEndpointArn = prefs.getString('aws_sns_endpoint_arn');
+
+  if (savedEndpointArn != null && savedEndpointArn.isNotEmpty) {
+    // エンドポイントARNが存在する場合、処理をスキップ
+    print('Endpoint already exists: $savedEndpointArn');
+    return;
   }
 
   final sns = SNS(
@@ -52,9 +64,8 @@ Future<void> _registerDeviceToken(String fcmToken) async {
   );
 
   try {
-    // TODO: ユーザー毎のエンドポイントとサブスクリプションを自動作成される様にする
     final response = await sns.createPlatformEndpoint(
-      platformApplicationArn: 'YOUR_PLATFORM_APPLICATION_ARN',
+      platformApplicationArn: dotenv.get('PLATFORM_APPLICATION_ARN'),
       token: fcmToken,
       customUserData: deviceId,
     );
@@ -119,55 +130,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      // home: const MyHomePage(title: 'Flutter Demo Home Page'),
-      home: const Example(),
+      home: const HomePage(),
+      // home: const Example(),
     );
   }
 }
-
-// class MyHomePage extends StatefulWidget {
-//   const MyHomePage({super.key, required this.title});
-//   final String title;
-
-//   @override
-//   State<MyHomePage> createState() => _MyHomePageState();
-// }
-
-// class _MyHomePageState extends State<MyHomePage> {
-//   int _counter = 0;
-
-//   void _incrementCounter() {
-//     setState(() {
-//       _counter++;
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-//         title: Text(widget.title),
-//       ),
-//       body: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: <Widget>[
-//             const Text(
-//               'You have pushed the button this many times:',
-//             ),
-//             Text(
-//               '$_counter',
-//               style: Theme.of(context).textTheme.headlineMedium,
-//             ),
-//           ],
-//         ),
-//       ),
-//       floatingActionButton: FloatingActionButton(
-//         onPressed: _incrementCounter,
-//         tooltip: 'Increment',
-//         child: const Icon(Icons.add),
-//       ),
-//     );
-//   }
-// }
