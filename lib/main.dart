@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// import 'package:engpush/view/example.dart';
-import 'view/home.dart';
 import 'package:engpush/aws_sns_init.dart';
 import 'package:engpush/firebase_options.dart';
 import 'package:engpush/route.dart';
