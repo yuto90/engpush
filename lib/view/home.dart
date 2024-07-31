@@ -1,6 +1,7 @@
 import 'package:engpush/provider/counter_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -20,6 +21,9 @@ class HomePage extends ConsumerWidget {
           itemBuilder: (context, index) {
             return ListTile(
               title: Text('Item $index'),
+              onTap: () => {
+                context.push('/word_book', extra: index),
+              },
             );
           },
         ),
