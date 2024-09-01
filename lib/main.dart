@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:engpush/aws_sns_init.dart';
 import 'package:engpush/firebase_options.dart';
 import 'package:engpush/route.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 // バックグラウンドメッセージハンドラ
 @pragma('vm:entry-point')
@@ -66,7 +67,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
+        textTheme: GoogleFonts.notoSansJavaneseTextTheme(
+          Theme.of(context).textTheme,
+        ),
       ),
+      locale: const Locale('ja', 'JP'),
       routerConfig: createRouter(),
     );
   }
