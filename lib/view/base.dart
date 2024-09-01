@@ -14,14 +14,20 @@ class Base extends ConsumerWidget {
     final currentIndex = ref.watch(bottomNavIndexProvider);
     final bottomNavIndexNotifier = ref.watch(bottomNavIndexProvider.notifier);
 
+    final List<Widget> appBars = [
+      const Text(AppBarTitles.search),
+      const Text(AppBarTitles.home),
+      const Text(AppBarTitles.settings),
+    ];
+
     final List<Widget> screens = [
-      const Center(child: Text('search')),
+      const Center(child: Text('なんか画面')),
       const Home(),
       const Center(child: Text('設定画面')),
     ];
 
     return Scaffold(
-      appBar: AppBar(title: const Text(AppBarTitles.home)),
+      appBar: AppBar(title: appBars[currentIndex]),
       body: screens[currentIndex],
       floatingActionButton: currentIndex == 1
           ? FloatingActionButton(
