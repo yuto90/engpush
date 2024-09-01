@@ -5,13 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class WordBookDetailPage extends ConsumerWidget {
-  final int id;
-
-  const WordBookDetailPage({
-    super.key,
-    required this.id,
-  });
+class NewWordBookPage extends ConsumerWidget {
+  const NewWordBookPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -19,8 +14,8 @@ class WordBookDetailPage extends ConsumerWidget {
     final bottomNavIndexNotifier = ref.watch(bottomNavIndexProvider.notifier);
 
     return Scaffold(
-      appBar: AppBar(title: const Text(AppBarTitles.detail)),
-      body: Center(child: Text('詳細：$id')),
+      appBar: AppBar(title: const Text(AppBarTitles.newWordBook)),
+      body: const Center(child: Text('new word book')),
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: currentIndex,
           onTap: (index) {

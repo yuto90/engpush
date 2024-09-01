@@ -4,6 +4,7 @@ import 'package:engpush/provider/bottom_nav_index_provider.dart';
 import 'package:engpush/view/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class Base extends ConsumerWidget {
   const Base({super.key});
@@ -22,6 +23,13 @@ class Base extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text(AppBarTitles.home)),
       body: screens[currentIndex],
+      floatingActionButton: currentIndex == 1
+          ? FloatingActionButton(
+              onPressed: () => context.push('/new_word_book'),
+              tooltip: 'Increment',
+              child: const Icon(Icons.add),
+            )
+          : null,
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: currentIndex,
           onTap: (index) {
