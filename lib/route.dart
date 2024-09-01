@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-import 'view/home.dart';
+import 'view/base.dart';
 import 'view/word_book_detail.dart';
 
 GoRouter createRouter() {
@@ -9,7 +8,7 @@ GoRouter createRouter() {
     routes: [
       GoRoute(
         path: '/',
-        pageBuilder: (context, state) => const MaterialPage(child: HomePage()),
+        pageBuilder: (context, state) => const MaterialPage(child: Base()),
       ),
       GoRoute(
         path: '/word_book',
