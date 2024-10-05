@@ -1,3 +1,6 @@
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
+import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:engpush/amplifyconfiguration.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -16,10 +19,22 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   print('Handling a background message: ${message.messageId}');
 }
 
+Future<void> _configureAmplify() async {
+  try {
+    await Amplify.addPlugin(AmplifyAuthCognito());
+    await Amplify.configure(amplifyconfig);
+    print('Successfully configured');
+  } catch (e) {
+    print('Error configuring Amplify: $e');
+  }
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // dotenvの初期化
   await dotenv.load(fileName: '.env');
+
+  await _configureAmplify();
 
   // Firebaseの初期化
   await Firebase.initializeApp(
@@ -28,6 +43,12 @@ Future<void> main() async {
 
   // 通知権限のリクエスト
   await FirebaseMessaging.instance.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
     alert: true,
     badge: true,
     sound: true,
