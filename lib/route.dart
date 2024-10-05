@@ -1,3 +1,4 @@
+import 'package:engpush/view/auth.dart';
 import 'package:engpush/view/new_word_book.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -9,6 +10,10 @@ GoRouter createRouter() {
     routes: [
       GoRoute(
         path: '/',
+        pageBuilder: (context, state) => const MaterialPage(child: Auth()),
+      ),
+      GoRoute(
+        path: '/base',
         pageBuilder: (context, state) => const MaterialPage(child: Base()),
       ),
       GoRoute(
