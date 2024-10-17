@@ -44,8 +44,8 @@ Future<String> getCognitoCurrentUser() async {
   try {
     AuthUser authUser = await Amplify.Auth.getCurrentUser();
     String userId = authUser.userId;
-    String username = authUser.username;
-    dynamic signInDetails = authUser.signInDetails;
+    // String username = authUser.username;
+    // dynamic signInDetails = authUser.signInDetails;
 
     return userId;
   } catch (e) {
