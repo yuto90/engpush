@@ -1,9 +1,9 @@
 import 'package:engpush/const.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
+// todo: エラーハンドリングを追加する
 class ApiClient {
   dynamic headers = const {'Content-Type': 'application/json'};
 
@@ -25,19 +25,31 @@ class ApiClient {
 
   // 単語帳作成
   // POST /word_book
-  Future<http.Response> post({Map<String, dynamic>? body}) async {
+  Future<http.Response> createWordBook(String newWordBookName) async {
     final prefs = await SharedPreferences.getInstance();
     final cognitoIdToken = prefs.getString('cognitoIdToken');
+    final userId = prefs.getString('cognitoUserId');
 
-    // cognitoIdTokenが期限切れだったら再度取得する
+    //todo: cognitoIdTokenが期限切れだったら再度取得する
     if (cognitoIdToken == null) {
       throw Exception('cognitoIdToken is null');
     }
 
+    final body = {
+      'UserId': userId,
+      'WordBookId': "3",
+      'Name': newWordBookName,
+      'PushNotificationEnabled': false,
+      'LastWordIndex': 0,
+    };
+
     final response = await http.post(
       Uri.parse(
           'https://aln6fgcqxj.execute-api.ap-northeast-1.amazonaws.com/dev/word_book'),
-      headers: {'Authorization': 'Bearer $cognitoIdToken'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $cognitoIdToken',
+      },
       body: jsonEncode(body),
     );
 

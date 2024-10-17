@@ -2,6 +2,7 @@ import 'package:engpush/const/app_bar_title.dart';
 import 'package:engpush/const/bottom_nav_bar_items.dart';
 import 'package:engpush/provider/bottom_nav_index_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -15,8 +16,18 @@ class NewWordBookPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text(AppBarTitles.newWordBook)),
-      body: const Center(
-        child: Text('new word book'),
+      body: Center(
+        child: Column(children: [
+          Container(
+            padding: const EdgeInsets.all(8.0),
+            child: const TextField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: '単語',
+              ),
+            ),
+          )
+        ]),
       ),
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: currentIndex,

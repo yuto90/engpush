@@ -1,10 +1,44 @@
+import 'package:engpush/api_client.dart';
 import 'package:engpush/const/app_bar_title.dart';
 import 'package:engpush/const/bottom_nav_bar_items.dart';
 import 'package:engpush/provider/bottom_nav_index_provider.dart';
 import 'package:engpush/view/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+
+void showAddNewWordBookModal(BuildContext context) {
+  final TextEditingController controller = TextEditingController();
+  final ApiClient api = ApiClient();
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('単語帳を作成'),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(hintText: '単語帳名: 中学英単語'),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('キャンセル'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          TextButton(
+            child: const Text('追加'),
+            onPressed: () {
+              String newWordBookName = controller.text;
+              api.createWordBook(newWordBookName);
+              // todo: DynamoDB追加後にUIにリストを表示する
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
 
 class Base extends ConsumerWidget {
   const Base({super.key});
@@ -34,7 +68,9 @@ class Base extends ConsumerWidget {
       body: screens[currentIndex],
       floatingActionButton: currentIndex == 1
           ? FloatingActionButton(
-              onPressed: () => context.push('/new_word_book'),
+              onPressed: () {
+                showAddNewWordBookModal(context);
+              },
               tooltip: 'Increment',
               child: const Icon(Icons.add),
             )

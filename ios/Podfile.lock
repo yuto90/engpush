@@ -4,9 +4,6 @@ PODS:
     - FlutterMacOS
   - amplify_secure_storage (0.0.1):
     - Flutter
-  - connectivity_plus (0.0.1):
-    - Flutter
-    - FlutterMacOS
   - device_info_plus (0.0.1):
     - Flutter
   - Firebase/CoreOnly (10.28.0):
@@ -91,7 +88,6 @@ PODS:
 DEPENDENCIES:
   - amplify_auth_cognito (from `.symlinks/plugins/amplify_auth_cognito/darwin`)
   - amplify_secure_storage (from `.symlinks/plugins/amplify_secure_storage/ios`)
-  - connectivity_plus (from `.symlinks/plugins/connectivity_plus/darwin`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
@@ -118,8 +114,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/amplify_auth_cognito/darwin"
   amplify_secure_storage:
     :path: ".symlinks/plugins/amplify_secure_storage/ios"
-  connectivity_plus:
-    :path: ".symlinks/plugins/connectivity_plus/darwin"
   device_info_plus:
     :path: ".symlinks/plugins/device_info_plus/ios"
   firebase_core:
@@ -140,7 +134,6 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   amplify_auth_cognito: b76a0e367489da2b9a3c6e5a8ec74a72a0a7cc2f
   amplify_secure_storage: ede2a5027299bab196b8baa030ed3f4cf50ce9a9
-  connectivity_plus: ddd7f30999e1faaef5967c23d5b6d503d10434db
   device_info_plus: 97af1d7e84681a90d0693e63169a5d50e0839a0d
   Firebase: 5121c624121af81cbc81df3bda414b3c28c4f3c3
   firebase_core: a9d0180d5285527884d07a41eb4a9ec9ed12cdb6
