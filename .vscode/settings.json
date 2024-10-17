@@ -10,5 +10,9 @@
   },
   "cSpell.words": [
     "amplifyconfig"
-  ]
+  ],
+  "workbench.colorCustomizations": {
+    "titleBar.activeBackground": "#66cdaa", // タイトルバーの背景色
+    "titleBar.activeForeground": "#008000", // タイトルバーの文字色
+  }
 }
