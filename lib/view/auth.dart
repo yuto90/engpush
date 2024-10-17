@@ -1,4 +1,4 @@
-import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:engpush/util/aws_amplify.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -19,12 +19,9 @@ class Auth extends ConsumerWidget {
         child: ElevatedButton(
           onPressed: () async {
             try {
-              SignInResult res = await Amplify.Auth.signInWithWebUI(
-                provider: AuthProvider.google,
-              );
-              print('res =====>');
-              print(res);
-              if (res.isSignedIn) {
+              bool isSignedIn = await signInWithGoogle();
+
+              if (isSignedIn) {
                 context.push('/base');
               }
             } catch (e) {
