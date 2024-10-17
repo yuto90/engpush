@@ -27,7 +27,10 @@ class Base extends ConsumerWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(title: appBars[currentIndex]),
+      appBar: AppBar(
+        title: appBars[currentIndex],
+        leading: Container(), // 戻るアイコンを非表示にする
+      ),
       body: screens[currentIndex],
       floatingActionButton: currentIndex == 1
           ? FloatingActionButton(

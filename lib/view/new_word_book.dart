@@ -15,12 +15,14 @@ class NewWordBookPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text(AppBarTitles.newWordBook)),
-      body: const Center(child: Text('new word book')),
+      body: const Center(
+        child: Text('new word book'),
+      ),
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: currentIndex,
           onTap: (index) {
             bottomNavIndexNotifier.changeDisplay(index);
-            context.push('/', extra: index);
+            context.pop();
           },
           selectedItemColor: Colors.amber[800],
           items: BottomNavBarItems.items),
