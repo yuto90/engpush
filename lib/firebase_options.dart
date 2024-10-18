@@ -63,7 +63,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '384792588963',
     projectId: 'engpush-31385',
     storageBucket: 'engpush-31385.appspot.com',
-    iosBundleId: 'com.engpush.engpush',
+    iosBundleId: 'com.engpushe.engpush',
   );
-
 }

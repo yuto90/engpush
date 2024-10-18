@@ -1,7 +1,8 @@
-import 'package:amplify_flutter/amplify_flutter.dart';
+import 'package:engpush/util/aws_amplify.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Auth extends ConsumerWidget {
   const Auth({super.key});
@@ -19,12 +20,13 @@ class Auth extends ConsumerWidget {
         child: ElevatedButton(
           onPressed: () async {
             try {
-              SignInResult res = await Amplify.Auth.signInWithWebUI(
-                provider: AuthProvider.google,
-              );
-              print('res =====>');
-              print(res);
-              if (res.isSignedIn) {
+              bool isSignedIn = await signInWithGoogle();
+              String userId = await getCognitoCurrentUser();
+
+              final prefs = await SharedPreferences.getInstance();
+              prefs.setString('cognitoUserId', userId);
+
+              if (isSignedIn) {
                 context.push('/base');
               }
             } catch (e) {
