@@ -15,7 +15,9 @@ class _AuthState extends ConsumerState<Auth> {
   @override
   void initState() {
     super.initState();
-    _checkAuthentication();
+    // todo: セッションの有効期限を確認
+    // todo: 認証済みとアクセストークンの期限は同期してないっぽい
+    // _checkAuthentication();
   }
 
   Future<void> _checkAuthentication() async {

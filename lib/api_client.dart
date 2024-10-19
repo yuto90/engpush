@@ -1,4 +1,3 @@
-import 'package:engpush/const.dart';
 import 'package:engpush/error.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -34,12 +33,16 @@ class ApiClient {
 
   // 単語帳一覧取得
   // GET /word_book
-  // Future<http.Response> getMessageList() async {
-  //   final response =
-  //       await http.get(Uri.parse('$baseUrl/messages'), headers: defaultHeaders);
-  //   _handleResponse(response);
-  //   return response;
-  // }
+  Future<http.Response> getWordBookList() async {
+    final cognitoIdToken = await _getCognitoIdToken();
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/word_book'),
+      headers: {'Authorization': 'Bearer $cognitoIdToken'},
+    );
+    _handleResponse(response);
+    return response;
+  }
 
   // 単語帳作成
   // POST /word_book
