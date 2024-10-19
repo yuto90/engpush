@@ -1,3 +1,4 @@
+import 'package:engpush/model/word_book/word_book_model.dart';
 import 'package:engpush/view/auth.dart';
 import 'package:engpush/view/new_word_book.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +20,8 @@ GoRouter createRouter() {
       GoRoute(
         path: '/word_book',
         pageBuilder: (context, state) {
-          final id = state.extra as int;
-          return MaterialPage(child: WordBookDetailPage(id: id));
+          final wordBook = state.extra as WordBook;
+          return MaterialPage(child: WordBookDetailPage(wordBook: wordBook));
         },
       ),
       GoRoute(

@@ -33,7 +33,7 @@ class ApiClient {
 
   // 単語帳一覧取得
   // GET /word_book
-  Future<http.Response> getWordBookList() async {
+  Future<List<Map<String, dynamic>>> getWordBookList() async {
     final cognitoIdToken = await _getCognitoIdToken();
 
     final response = await http.get(
@@ -41,7 +41,8 @@ class ApiClient {
       headers: {'Authorization': 'Bearer $cognitoIdToken'},
     );
     _handleResponse(response);
-    return response;
+    print(response.body);
+    return List<Map<String, dynamic>>.from(json.decode(response.body));
   }
 
   // 単語帳作成

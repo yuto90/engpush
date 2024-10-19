@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 void showAddNewWordBookModal(BuildContext context) {
-  final ApiClient api = ApiClient();
+  final ApiClient apiClient = ApiClient();
   final formKey = GlobalKey<FormState>();
   final TextEditingController controller = TextEditingController();
 
@@ -42,7 +42,7 @@ void showAddNewWordBookModal(BuildContext context) {
             child: const Text('追加'),
             onPressed: () {
               if (formKey.currentState!.validate()) {
-                api.createWordBook(controller.text);
+                apiClient.createWordBook(controller.text);
                 context.pop();
               }
             },
@@ -59,7 +59,7 @@ class Base extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = ref.watch(bottomNavIndexProvider);
-    final bottomNavIndexNotifier = ref.watch(bottomNavIndexProvider.notifier);
+    final bottomNavIndexNotifier = ref.read(bottomNavIndexProvider.notifier);
 
     final List<Widget> appBars = [
       const Text(AppBarTitles.search),

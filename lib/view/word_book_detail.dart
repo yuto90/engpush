@@ -1,16 +1,17 @@
 import 'package:engpush/const/app_bar_title.dart';
 import 'package:engpush/const/bottom_nav_bar_items.dart';
+import 'package:engpush/model/word_book/word_book_model.dart';
 import 'package:engpush/provider/bottom_nav_index_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 class WordBookDetailPage extends ConsumerWidget {
-  final int id;
+  final WordBook wordBook;
 
   const WordBookDetailPage({
     super.key,
-    required this.id,
+    required this.wordBook,
   });
 
   @override
@@ -20,7 +21,7 @@ class WordBookDetailPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text(AppBarTitles.detail)),
-      body: Center(child: Text('詳細：$id')),
+      body: Center(child: Text('詳細：$wordBook')),
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: currentIndex,
           onTap: (index) {

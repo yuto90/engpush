@@ -54,6 +54,7 @@ Future<void> main() async {
     sound: true,
   );
 
+  // todo: エラーハンドリング
   // FCMトークンの取得
   final fcmToken = await FirebaseMessaging.instance.getToken();
   print('FCM Token: $fcmToken');
