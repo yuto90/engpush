@@ -10,9 +10,7 @@ GoRouter createRouter() {
     routes: [
       GoRoute(
         path: '/',
-        // todo: 認証状態によってAuthに遷移するかBaseに遷移するかを判定する
         pageBuilder: (context, state) => const MaterialPage(child: Auth()),
-        // pageBuilder: (context, state) => const MaterialPage(child: Base()),
       ),
       GoRoute(
         path: '/base',

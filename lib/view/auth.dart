@@ -4,18 +4,33 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Auth extends ConsumerWidget {
+class Auth extends ConsumerStatefulWidget {
   const Auth({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // final notifier = ref.read(counterProvider.notifier);
-    // final counter = ref.watch(counterProvider);
+  ConsumerState<Auth> createState() => _AuthState();
+}
 
+class _AuthState extends ConsumerState<Auth> {
+  @override
+  void initState() {
+    super.initState();
+    _checkAuthentication();
+  }
+
+  Future<void> _checkAuthentication() async {
+    // 認証済みかどうかを確認
+    final session = await isAuthenticated();
+    if (session) {
+      context.push('/base');
+      return;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Login'),
-      ),
+      appBar: AppBar(title: const Text('Login')),
       body: Center(
         child: ElevatedButton(
           onPressed: () async {
