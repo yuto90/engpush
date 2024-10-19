@@ -5,33 +5,46 @@ import 'package:engpush/provider/bottom_nav_index_provider.dart';
 import 'package:engpush/view/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 void showAddNewWordBookModal(BuildContext context) {
+  final ApiClient apiClient = ApiClient();
+  final formKey = GlobalKey<FormState>();
   final TextEditingController controller = TextEditingController();
-  final ApiClient api = ApiClient();
 
   showDialog(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: const Text('単語帳を作成'),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(hintText: '単語帳名: 中学英単語'),
-        ),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('キャンセル'),
-            onPressed: () {
-              Navigator.of(context).pop();
+        title: const Text('新しい単語帳を作成'),
+        content: Form(
+          key: formKey,
+          child: TextFormField(
+            controller: controller,
+            decoration: const InputDecoration(labelText: '単語帳名: 中学英単語'),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return '必須項目です';
+              }
+              if (value.length > 50) {
+                return '最大50文字まで入力できます';
+              }
+              return null;
             },
           ),
+        ),
+        actions: [
           TextButton(
+            child: const Text('キャンセル'),
+            onPressed: () => context.pop(),
+          ),
+          ElevatedButton(
             child: const Text('追加'),
             onPressed: () {
-              String newWordBookName = controller.text;
-              api.createWordBook(newWordBookName);
-              // todo: DynamoDB追加後にUIにリストを表示する
+              if (formKey.currentState!.validate()) {
+                apiClient.createWordBook(controller.text);
+                context.pop();
+              }
             },
           ),
         ],
@@ -46,7 +59,7 @@ class Base extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = ref.watch(bottomNavIndexProvider);
-    final bottomNavIndexNotifier = ref.watch(bottomNavIndexProvider.notifier);
+    final bottomNavIndexNotifier = ref.read(bottomNavIndexProvider.notifier);
 
     final List<Widget> appBars = [
       const Text(AppBarTitles.search),
