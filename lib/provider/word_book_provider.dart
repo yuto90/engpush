@@ -1,4 +1,4 @@
-import 'package:engpush/api_client.dart';
+import 'package:engpush/util/aws_dynamodb.dart';
 import 'package:engpush/model/word_book/word_book_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -9,10 +9,10 @@ final wordBookProvider =
 class WordBookNotifier extends StateNotifier<List<WordBook>> {
   WordBookNotifier() : super(const [WordBook()]);
 
-  final ApiClient apiClient = ApiClient();
+  final DynamodbUtil dynamodbUtil = DynamodbUtil();
 
   Future<void> getWordBookList() async {
-    final wordBooks = await apiClient.getWordBookList();
+    final wordBooks = await dynamodbUtil.getWordBookList();
 
     List<WordBook> wordBookList = wordBooks.map((e) {
       return WordBook(

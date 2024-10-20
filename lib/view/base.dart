@@ -1,4 +1,4 @@
-import 'package:engpush/api_client.dart';
+import 'package:engpush/util/aws_dynamodb.dart';
 import 'package:engpush/const/app_bar_title.dart';
 import 'package:engpush/const/bottom_nav_bar_items.dart';
 import 'package:engpush/provider/bottom_nav_index_provider.dart';
@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 void showAddNewWordBookModal(BuildContext context) {
-  final ApiClient apiClient = ApiClient();
+  final DynamodbUtil dynamodbUtil = DynamodbUtil();
   final formKey = GlobalKey<FormState>();
   final TextEditingController controller = TextEditingController();
 
@@ -42,7 +42,7 @@ void showAddNewWordBookModal(BuildContext context) {
             child: const Text('追加'),
             onPressed: () {
               if (formKey.currentState!.validate()) {
-                apiClient.createWordBook(controller.text);
+                dynamodbUtil.createWordBook(controller.text);
                 context.pop();
               }
             },

@@ -1,14 +1,12 @@
+import 'dart:convert';
 import 'package:engpush/error.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiClient {
-  // todo: 環境によってURLを変更する
-  static const String baseUrl =
+  final String _baseUrl =
       'https://aln6fgcqxj.execute-api.ap-northeast-1.amazonaws.com/dev';
-
-  static const Map<String, String> defaultHeaders = {
+  final Map<String, String> _defaultHeaders = {
     'Content-Type': 'application/json'
   };
 
@@ -24,74 +22,85 @@ class ApiClient {
     return token;
   }
 
-  void _handleResponse(http.Response response, String functionName) {
-    // 200番台以外だったらエラーに落とす
+  void _handleResponse(http.Response response, String methodName) {
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw Exception('$functionName: API execution failed');
+      throw Exception(
+          'Failed to $methodName: ${response.statusCode} ${response.body}');
     }
   }
 
-  /// /word_book ==========================================
-  ///
-
-  // 単語帳一覧取得
-  // GET /word_book
-  Future<List<Map<String, dynamic>>> getWordBookList() async {
-    final cognitoIdToken = await _getCognitoIdToken();
-
-    final response = await http.get(
-      Uri.parse('$baseUrl/word_book'),
-      headers: {'Authorization': 'Bearer $cognitoIdToken'},
-    );
-    _handleResponse(response, 'getWordBookList');
-    return List<Map<String, dynamic>>.from(json.decode(response.body));
+  String _buildEndpoint(
+      String endpointTemplate, Map<String, String>? pathParams) {
+    if (pathParams == null) return endpointTemplate;
+    pathParams.forEach((key, value) {
+      endpointTemplate = endpointTemplate.replaceAll('{$key}', value);
+    });
+    return endpointTemplate;
   }
 
-  // 単語帳作成
-  // POST /word_book
-  // todo: レスポンスをただ返すだけじゃなくてデータを直接返していいかも
-  Future<http.Response> createWordBook(String newWordBookName) async {
-    final prefs = await _getPrefs();
-    final cognitoIdToken = await _getCognitoIdToken();
-    final userId = prefs.getString('cognitoUserId');
-
+  Future<http.Response> get({
+    required String endpointTemplate,
+    Map<String, String>? pathParams,
+    Map<String, String>? queryParams,
+  }) async {
     //todo: cognitoIdTokenが期限切れだったら再度取得する
-    if (cognitoIdToken == null) {
-      throw Exception('cognitoIdToken is null');
-    }
-
-    final body = {
-      'UserId': userId,
-      'WordBookId': userId! + DateTime.now().millisecondsSinceEpoch.toString(),
-      'Name': newWordBookName,
-      'PushNotificationEnabled': false,
-      'LastWordIndex': 0,
-    };
-
-    final response = await http.post(
-      Uri.parse('$baseUrl/word_book'),
-      headers: {...defaultHeaders, 'Authorization': 'Bearer $cognitoIdToken'},
-      body: jsonEncode(body),
+    final cognitoIdToken = await _getCognitoIdToken();
+    final endpoint = _buildEndpoint(endpointTemplate, pathParams);
+    print(endpoint);
+    final uri =
+        Uri.parse('$_baseUrl$endpoint').replace(queryParameters: queryParams);
+    final response = await http.get(
+      uri,
+      headers: {..._defaultHeaders, 'Authorization': 'Bearer $cognitoIdToken'},
     );
-
-    _handleResponse(response, 'createWordBook');
+    _handleResponse(response, 'GET $endpoint');
     return response;
   }
 
-  /// /word ==========================================
-  ///
-
-  // 単語一覧取得
-  // GET /word/{word_book_Id}
-  Future<List<Map<String, dynamic>>> getWordList(String wordBookId) async {
+  Future<http.Response> post({
+    required String endpointTemplate,
+    Map<String, String>? pathParams,
+    dynamic body,
+  }) async {
     final cognitoIdToken = await _getCognitoIdToken();
+    final endpoint = _buildEndpoint(endpointTemplate, pathParams);
 
-    final response = await http.get(
-      Uri.parse('$baseUrl/word/$wordBookId'),
-      headers: {'Authorization': 'Bearer $cognitoIdToken'},
+    final response = await http.post(
+      Uri.parse('$_baseUrl$endpoint'),
+      headers: {..._defaultHeaders, 'Authorization': 'Bearer $cognitoIdToken'},
+      body: jsonEncode(body),
     );
-    _handleResponse(response, 'getWordBookList');
-    print(response.body);
-    return List<Map<String, dynamic>>.from(json.decode(response.body));
+    _handleResponse(response, 'POST $endpoint');
+    return response;
+  }
+
+  Future<http.Response> put({
+    required String endpointTemplate,
+    Map<String, String>? pathParams,
+    dynamic body,
+  }) async {
+    final cognitoIdToken = await _getCognitoIdToken();
+    final endpoint = _buildEndpoint(endpointTemplate, pathParams);
+    final response = await http.put(
+      Uri.parse('$_baseUrl$endpoint'),
+      headers: {..._defaultHeaders, 'Authorization': 'Bearer $cognitoIdToken'},
+      body: jsonEncode(body),
+    );
+    _handleResponse(response, 'PUT $endpoint');
+    return response;
+  }
+
+  Future<http.Response> delete({
+    required String endpointTemplate,
+    Map<String, String>? pathParams,
+  }) async {
+    final cognitoIdToken = await _getCognitoIdToken();
+    final endpoint = _buildEndpoint(endpointTemplate, pathParams);
+    final response = await http.delete(
+      Uri.parse('$_baseUrl$endpoint'),
+      headers: {..._defaultHeaders, 'Authorization': 'Bearer $cognitoIdToken'},
+    );
+    _handleResponse(response, 'DELETE $endpoint');
+    return response;
   }
 }

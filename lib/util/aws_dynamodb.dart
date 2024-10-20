@@ -1,0 +1,65 @@
+import 'package:engpush/api_client.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class DynamodbUtil {
+  // todo: 環境によってURLを変更する
+  static const String baseUrl =
+      'https://aln6fgcqxj.execute-api.ap-northeast-1.amazonaws.com/dev';
+
+  static const Map<String, String> defaultHeaders = {
+    'Content-Type': 'application/json'
+  };
+
+  final _apiClient = ApiClient();
+
+  /// /word_book ==========================================
+  ///
+
+  // 単語帳一覧取得
+  // GET /word_book
+  Future<List<Map<String, dynamic>>> getWordBookList() async {
+    final response = await _apiClient.get(
+      endpointTemplate: '/word_book',
+    );
+    return List<Map<String, dynamic>>.from(json.decode(response.body));
+  }
+
+  // 単語帳作成
+  // POST /word_book
+  // todo: レスポンスをただ返すだけじゃなくてデータを直接返していいかも
+  Future<http.Response> createWordBook(String newWordBookName) async {
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getString('cognitoUserId');
+
+    final body = {
+      'UserId': userId,
+      'WordBookId': userId! + DateTime.now().millisecondsSinceEpoch.toString(),
+      'Name': newWordBookName,
+      'PushNotificationEnabled': false,
+      'LastWordIndex': 0,
+    };
+
+    final response = _apiClient.post(
+      endpointTemplate: '/word_book',
+      body: body,
+    );
+
+    return response;
+  }
+
+  /// /word ==========================================
+  ///
+
+  // 単語一覧取得
+  // GET /word/{word_book_Id}
+  Future<List<Map<String, dynamic>>> getWordList(String wordBookId) async {
+    final response = await _apiClient.get(
+      endpointTemplate: '/word/{word_book_Id}',
+      pathParams: {'word_book_Id': wordBookId},
+    );
+    print(response.body);
+    return List<Map<String, dynamic>>.from(json.decode(response.body));
+  }
+}
