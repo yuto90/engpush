@@ -26,7 +26,7 @@ class WordBookDetailPage extends ConsumerWidget {
           currentIndex: currentIndex,
           onTap: (index) {
             bottomNavIndexNotifier.changeDisplay(index);
-            context.push('/', extra: index);
+            context.push('/base', extra: index);
           },
           selectedItemColor: Colors.amber[800],
           items: BottomNavBarItems.items),
