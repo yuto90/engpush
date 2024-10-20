@@ -54,13 +54,13 @@ Future<void> main() async {
     sound: true,
   );
 
+  // todo: ローカルプッシュの方がいいかもなので一旦コメントアウト
   // todo: エラーハンドリング
-  // FCMトークンの取得
-  final fcmToken = await FirebaseMessaging.instance.getToken();
-  print('FCM Token: $fcmToken');
-
-  // AWS SNSのセットアップ
-  await initAwsSns(fcmToken!);
+  // // FCMトークンの取得
+  // final fcmToken = await FirebaseMessaging.instance.getToken();
+  // print('FCM Token: $fcmToken');
+  // // AWS SNSのセットアップ
+  // await initAwsSns(fcmToken!);
 
   // バックグラウンドメッセージハンドラの設定
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
