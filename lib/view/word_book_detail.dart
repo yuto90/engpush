@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../util/aws_dynamodb.dart';
+
 class WordBookDetailPage extends ConsumerWidget {
   final WordBook wordBook;
 
@@ -18,15 +20,26 @@ class WordBookDetailPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = ref.watch(bottomNavIndexProvider);
     final bottomNavIndexNotifier = ref.watch(bottomNavIndexProvider.notifier);
+    final DynamodbUtil dynamodbUtil = DynamodbUtil();
 
     return Scaffold(
       appBar: AppBar(title: const Text(AppBarTitles.detail)),
-      body: Center(child: Text('詳細：$wordBook')),
+      body: Column(
+        children: [
+          Center(child: Text('詳細：$wordBook')),
+          // ElevatedButton(
+          //   child: const Text('追加'),
+          //   onPressed: () {
+          //     dynamodbUtil.getWordList(wordBook.wordBookId);
+          //   },
+          // )
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: currentIndex,
           onTap: (index) {
             bottomNavIndexNotifier.changeDisplay(index);
-            context.push('/', extra: index);
+            context.push('/base', extra: index);
           },
           selectedItemColor: Colors.amber[800],
           items: BottomNavBarItems.items),

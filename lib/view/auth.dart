@@ -18,6 +18,8 @@ class _AuthState extends ConsumerState<Auth> {
     // todo: セッションの有効期限を確認
     // todo: 認証済みとアクセストークンの期限は同期してないっぽい
     // _checkAuthentication();
+
+    // todo dynamodbから各種データを取得してRiverpodで管理する
   }
 
   Future<void> _checkAuthentication() async {
