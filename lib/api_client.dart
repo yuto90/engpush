@@ -24,12 +24,15 @@ class ApiClient {
     return token;
   }
 
-  void _handleResponse(http.Response response) {
+  void _handleResponse(http.Response response, String functionName) {
     // 200番台以外だったらエラーに落とす
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw Exception('Failed to load data from API');
+      throw Exception('$functionName: API execution failed');
     }
   }
+
+  /// /word_book ==========================================
+  ///
 
   // 単語帳一覧取得
   // GET /word_book
@@ -40,13 +43,13 @@ class ApiClient {
       Uri.parse('$baseUrl/word_book'),
       headers: {'Authorization': 'Bearer $cognitoIdToken'},
     );
-    _handleResponse(response);
-    print(response.body);
+    _handleResponse(response, 'getWordBookList');
     return List<Map<String, dynamic>>.from(json.decode(response.body));
   }
 
   // 単語帳作成
   // POST /word_book
+  // todo: レスポンスをただ返すだけじゃなくてデータを直接返していいかも
   Future<http.Response> createWordBook(String newWordBookName) async {
     final prefs = await _getPrefs();
     final cognitoIdToken = await _getCognitoIdToken();
@@ -59,7 +62,7 @@ class ApiClient {
 
     final body = {
       'UserId': userId,
-      'WordBookId': DateTime.now().millisecondsSinceEpoch.toString(),
+      'WordBookId': userId! + DateTime.now().millisecondsSinceEpoch.toString(),
       'Name': newWordBookName,
       'PushNotificationEnabled': false,
       'LastWordIndex': 0,
@@ -71,7 +74,24 @@ class ApiClient {
       body: jsonEncode(body),
     );
 
-    _handleResponse(response);
+    _handleResponse(response, 'createWordBook');
     return response;
+  }
+
+  /// /word ==========================================
+  ///
+
+  // 単語一覧取得
+  // GET /word/{word_book_Id}
+  Future<List<Map<String, dynamic>>> getWordList(String wordBookId) async {
+    final cognitoIdToken = await _getCognitoIdToken();
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/word/$wordBookId'),
+      headers: {'Authorization': 'Bearer $cognitoIdToken'},
+    );
+    _handleResponse(response, 'getWordBookList');
+    print(response.body);
+    return List<Map<String, dynamic>>.from(json.decode(response.body));
   }
 }
