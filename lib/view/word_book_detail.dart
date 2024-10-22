@@ -113,20 +113,51 @@ class WordBookDetailPage extends ConsumerWidget {
     final currentIndex = ref.watch(bottomNavIndexProvider);
     final bottomNavIndexNotifier = ref.watch(bottomNavIndexProvider.notifier);
     final DynamodbUtil dynamodbUtil = DynamodbUtil();
+    // todo: 一度取得したデータはReverpodで管理する
+    final fetchedWordBook = dynamodbUtil.getWordList(wordBook.wordBookId);
 
     return Scaffold(
       appBar: AppBar(title: Text(wordBook.name)),
-      body: Column(
-        children: [
-          Center(child: Text('詳細：$wordBook')),
+      body: FutureBuilder(
+        future: fetchedWordBook,
+        builder: (context, snapshot) {
+          // 通信中はローディングのぐるぐるを表示
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-          // ElevatedButton(
-          //   child: const Text('追加'),
-          //   onPressed: () {
-          //     dynamodbUtil.getWordList(wordBook.wordBookId);
-          //   },
-          // )
-        ],
+          // 通信が失敗した場合
+          if (snapshot.hasError) {
+            return Center(child: Text('通信エラーが発生しました: ${snapshot.error}'));
+          }
+
+          // shapshot.dataがnullの場合
+          if (snapshot.data == null || snapshot.data!.isEmpty) {
+            return const Center(child: Text('単語が登録されていません'));
+          }
+
+          // snapshot.dataにデータが格納されていれば
+          if (snapshot.hasData) {
+            return CustomScrollView(
+              slivers: [
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final word = snapshot.data;
+                      return ListTile(
+                        title: Text(word![index]['Word']),
+                        subtitle: Text(word[index]['Mean']),
+                        trailing: Text(word[index]['PartOfSpeech']),
+                      );
+                    },
+                    childCount: snapshot.data!.length,
+                  ),
+                ),
+              ],
+            );
+          }
+          return const Center(child: Text('単語が登録されていません'));
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
