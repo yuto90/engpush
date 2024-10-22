@@ -71,11 +71,6 @@ class DynamodbUtil {
     String mean,
     String partOfSpeech,
   ) async {
-    print('wordBookId: $wordBookId');
-    print('word: $word');
-    print('mean: $mean');
-    print('partOfSpeech: $partOfSpeech');
-
     final body = {
       "Word": word,
       "Mean": mean,
@@ -84,6 +79,7 @@ class DynamodbUtil {
 
     final response = await _apiClient.post(
       endpointTemplate: '/word/{word_book_Id}',
+      pathParams: {'word_book_Id': wordBookId},
       body: body,
     );
 
