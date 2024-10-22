@@ -41,7 +41,7 @@ class DynamodbUtil {
       'LastWordIndex': 0,
     };
 
-    final response = _apiClient.post(
+    final response = await _apiClient.post(
       endpointTemplate: '/word_book',
       body: body,
     );
@@ -61,5 +61,32 @@ class DynamodbUtil {
     );
     print(response.body);
     return List<Map<String, dynamic>>.from(json.decode(response.body));
+  }
+
+  // 単語登録
+  // GET /word/{word_book_Id}
+  Future<Map<String, dynamic>> createWord(
+    String wordBookId,
+    String word,
+    String mean,
+    String partOfSpeech,
+  ) async {
+    print('wordBookId: $wordBookId');
+    print('word: $word');
+    print('mean: $mean');
+    print('partOfSpeech: $partOfSpeech');
+
+    final body = {
+      "Word": word,
+      "Mean": mean,
+      "PartOfSpeech": partOfSpeech,
+    };
+
+    final response = await _apiClient.post(
+      endpointTemplate: '/word/{word_book_Id}',
+      body: body,
+    );
+
+    return json.decode(response.body);
   }
 }
