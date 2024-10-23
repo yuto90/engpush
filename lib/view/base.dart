@@ -1,57 +1,10 @@
-import 'package:engpush/util/aws_dynamodb.dart';
 import 'package:engpush/const/app_bar_title.dart';
 import 'package:engpush/const/bottom_nav_bar_items.dart';
 import 'package:engpush/provider/bottom_nav_index_provider.dart';
+import 'package:engpush/ui/show_add_new_word_book_modal.dart';
 import 'package:engpush/view/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-
-void showAddNewWordBookModal(BuildContext context) {
-  final DynamodbUtil dynamodbUtil = DynamodbUtil();
-  final formKey = GlobalKey<FormState>();
-  final TextEditingController controller = TextEditingController();
-
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('新しい単語帳を作成'),
-        content: Form(
-          key: formKey,
-          child: TextFormField(
-            controller: controller,
-            decoration: const InputDecoration(labelText: '単語帳名: 中学英単語'),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return '必須項目です';
-              }
-              if (value.length > 50) {
-                return '最大50文字まで入力できます';
-              }
-              return null;
-            },
-          ),
-        ),
-        actions: [
-          TextButton(
-            child: const Text('キャンセル'),
-            onPressed: () => context.pop(),
-          ),
-          ElevatedButton(
-            child: const Text('追加'),
-            onPressed: () {
-              if (formKey.currentState!.validate()) {
-                dynamodbUtil.createWordBook(controller.text);
-                context.pop();
-              }
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
 
 class Base extends ConsumerWidget {
   const Base({super.key});
