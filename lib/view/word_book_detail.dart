@@ -1,7 +1,7 @@
 import 'package:engpush/const/bottom_nav_bar_items.dart';
 import 'package:engpush/model/word_book/word_book_model.dart';
 import 'package:engpush/provider/bottom_nav_index_provider.dart';
-import 'package:engpush/ui/show_add_new_word_modal.dart';
+import 'package:engpush/ui/show_word_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -72,6 +72,17 @@ class WordBookDetailPage extends ConsumerWidget {
                                 icon: const Icon(Icons.edit),
                                 onPressed: () {
                                   // Add your onPressed code here!
+                                  showWordModal(
+                                    context,
+                                    wordBook.wordBookId,
+                                    word[index]['WordId'],
+                                    word: {
+                                      'word': word[index]['Word'],
+                                      'meaning': word[index]['Mean'],
+                                      'partOfSpeech': word[index]
+                                          ['PartOfSpeech'],
+                                    },
+                                  );
                                 },
                               ),
                             ],
@@ -90,7 +101,7 @@ class WordBookDetailPage extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showAddNewWordModal(context, wordBook.wordBookId);
+          showWordModal(context, wordBook.wordBookId, null);
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),

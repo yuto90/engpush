@@ -2,21 +2,25 @@ import 'package:engpush/util/aws_dynamodb.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-void showAddNewWordModal(BuildContext context, String wordBookId) {
+void showWordModal(BuildContext context, String wordBookId, String? wordId,
+    {Map<String, String>? word}) {
   final DynamodbUtil dynamodbUtil = DynamodbUtil();
   final formKey = GlobalKey<FormState>();
-  final TextEditingController wordController = TextEditingController();
-  final TextEditingController meanController = TextEditingController();
-  String selectedPartOfSpeech = 'noSelected';
+  final TextEditingController wordController =
+      TextEditingController(text: word?['word'] ?? '');
+  final TextEditingController meanController =
+      TextEditingController(text: word?['meaning'] ?? '');
+  String selectedPartOfSpeech = word?['partOfSpeech'] ?? 'noSelected';
 
   showDialog(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: const Text('新しい単語を作成'),
+        title: Text(word == null ? '新しい単語を作成' : '単語を編集'),
         content: Form(
           key: formKey,
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               TextFormField(
                 controller: wordController,
@@ -46,6 +50,7 @@ void showAddNewWordModal(BuildContext context, String wordBookId) {
               ),
               DropdownButtonFormField<String>(
                 decoration: const InputDecoration(labelText: '品詞'),
+                value: selectedPartOfSpeech,
                 items: const [
                   DropdownMenuItem(value: 'noSelected', child: Text('-')),
                   DropdownMenuItem(value: 'noun', child: Text('名詞')),
@@ -60,12 +65,6 @@ void showAddNewWordModal(BuildContext context, String wordBookId) {
                 onChanged: (value) {
                   selectedPartOfSpeech = value!;
                 },
-                // validator: (value) {
-                //   if (value == null || value.isEmpty) {
-                //     return '必須項目です';
-                //   }
-                //   return null;
-                // },
               ),
             ],
           ),
@@ -76,15 +75,25 @@ void showAddNewWordModal(BuildContext context, String wordBookId) {
             onPressed: () => context.pop(),
           ),
           ElevatedButton(
-            child: const Text('追加'),
+            child: Text(word == null ? '追加' : '更新'),
             onPressed: () {
               if (formKey.currentState!.validate()) {
-                dynamodbUtil.createWord(
-                  wordBookId,
-                  wordController.text,
-                  meanController.text,
-                  selectedPartOfSpeech,
-                );
+                if (word == null) {
+                  dynamodbUtil.createWord(
+                    wordBookId,
+                    wordController.text,
+                    meanController.text,
+                    selectedPartOfSpeech,
+                  );
+                } else {
+                  dynamodbUtil.updateWord(
+                    wordBookId,
+                    wordId!,
+                    wordController.text,
+                    meanController.text,
+                    selectedPartOfSpeech,
+                  );
+                }
                 context.pop();
               }
             },
