@@ -11,7 +11,6 @@ class Home extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final List<WordBook> wordBooks = ref.watch(wordBookProvider);
-    print('wordBooks: $wordBooks');
 
     if (wordBooks.isEmpty) {
       ref.read(wordBookProvider.notifier).getWordBookList();

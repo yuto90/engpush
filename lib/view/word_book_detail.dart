@@ -1,12 +1,12 @@
 import 'package:engpush/const/bottom_nav_bar_items.dart';
+import 'package:engpush/model/word/word_model.dart';
 import 'package:engpush/model/word_book/word_book_model.dart';
 import 'package:engpush/provider/bottom_nav_index_provider.dart';
+import 'package:engpush/provider/word_provider.dart';
 import 'package:engpush/ui/show_word_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import '../util/aws_dynamodb.dart';
 
 class WordBookDetailPage extends ConsumerWidget {
   final WordBook wordBook;
@@ -20,38 +20,21 @@ class WordBookDetailPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = ref.watch(bottomNavIndexProvider);
     final bottomNavIndexNotifier = ref.watch(bottomNavIndexProvider.notifier);
-    final DynamodbUtil dynamodbUtil = DynamodbUtil();
-    // todo: 一度取得したデータはReverpodで管理する
-    final fetchedWordBook = dynamodbUtil.getWordList(wordBook.wordBookId);
+    final List<Word> words = ref.watch(wordProvider);
+
+    if (words.isEmpty) {
+      ref.read(wordProvider.notifier).getWordList(wordBook.wordBookId);
+    }
 
     return Scaffold(
       appBar: AppBar(title: Text(wordBook.name)),
-      body: FutureBuilder(
-        future: fetchedWordBook,
-        builder: (context, snapshot) {
-          // 通信中はローディングのぐるぐるを表示
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          // 通信が失敗した場合
-          if (snapshot.hasError) {
-            return Center(child: Text('通信エラーが発生しました: ${snapshot.error}'));
-          }
-
-          // shapshot.dataがnullの場合
-          if (snapshot.data == null || snapshot.data!.isEmpty) {
-            return const Center(child: Text('単語が登録されていません'));
-          }
-
-          // snapshot.dataにデータが格納されていれば
-          if (snapshot.hasData) {
-            return CustomScrollView(
+      body: words.isEmpty
+          ? const Center(child: CircularProgressIndicator())
+          : CustomScrollView(
               slivers: [
                 SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
-                      final word = snapshot.data;
                       return Container(
                         decoration: const BoxDecoration(
                           border: Border(
@@ -60,14 +43,14 @@ class WordBookDetailPage extends ConsumerWidget {
                         ),
                         child: ListTile(
                           title: Text(
-                            word![index]['Word'],
+                            words[index].word,
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          subtitle: Text(word[index]['Mean']),
+                          subtitle: Text(words[index].mean),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(word[index]['PartOfSpeech']),
+                              Text(words[index].partOfSpeech),
                               IconButton(
                                 icon: const Icon(Icons.edit),
                                 onPressed: () {
@@ -75,12 +58,11 @@ class WordBookDetailPage extends ConsumerWidget {
                                   showWordModal(
                                     context,
                                     wordBook.wordBookId,
-                                    word[index]['WordId'],
+                                    words[index].wordId,
                                     word: {
-                                      'word': word[index]['Word'],
-                                      'meaning': word[index]['Mean'],
-                                      'partOfSpeech': word[index]
-                                          ['PartOfSpeech'],
+                                      'word': words[index].word,
+                                      'meaning': words[index].mean,
+                                      'partOfSpeech': words[index].partOfSpeech,
                                     },
                                   );
                                 },
@@ -90,15 +72,85 @@ class WordBookDetailPage extends ConsumerWidget {
                         ),
                       );
                     },
-                    childCount: snapshot.data!.length,
+                    childCount: words.length,
                   ),
                 ),
               ],
-            );
-          }
-          return const Center(child: Text('単語が登録されていません'));
-        },
-      ),
+            ),
+
+      // body: FutureBuilder(
+      //   future: fetchedWordBook,
+      //   builder: (context, snapshot) {
+      //     // 通信中はローディングのぐるぐるを表示
+      //     if (snapshot.connectionState == ConnectionState.waiting) {
+      //       return const Center(child: CircularProgressIndicator());
+      //     }
+
+      //     // 通信が失敗した場合
+      //     if (snapshot.hasError) {
+      //       return Center(child: Text('通信エラーが発生しました: ${snapshot.error}'));
+      //     }
+
+      //     // shapshot.dataがnullの場合
+      //     if (snapshot.data == null || snapshot.data!.isEmpty) {
+      //       return const Center(child: Text('単語が登録されていません'));
+      //     }
+
+      //     // snapshot.dataにデータが格納されていれば
+      //     if (snapshot.hasData) {
+      //       return CustomScrollView(
+      //         slivers: [
+      //           SliverList(
+      //             delegate: SliverChildBuilderDelegate(
+      //               (context, index) {
+      //                 final word = snapshot.data;
+      //                 return Container(
+      //                   decoration: const BoxDecoration(
+      //                     border: Border(
+      //                       bottom: BorderSide(color: Colors.grey),
+      //                     ),
+      //                   ),
+      //                   child: ListTile(
+      //                     title: Text(
+      //                       word![index]['Word'],
+      //                       style: const TextStyle(fontWeight: FontWeight.bold),
+      //                     ),
+      //                     subtitle: Text(word[index]['Mean']),
+      //                     trailing: Row(
+      //                       mainAxisSize: MainAxisSize.min,
+      //                       children: [
+      //                         Text(word[index]['PartOfSpeech']),
+      //                         IconButton(
+      //                           icon: const Icon(Icons.edit),
+      //                           onPressed: () {
+      //                             // Add your onPressed code here!
+      //                             showWordModal(
+      //                               context,
+      //                               wordBook.wordBookId,
+      //                               word[index]['WordId'],
+      //                               word: {
+      //                                 'word': word[index]['Word'],
+      //                                 'meaning': word[index]['Mean'],
+      //                                 'partOfSpeech': word[index]
+      //                                     ['PartOfSpeech'],
+      //                               },
+      //                             );
+      //                           },
+      //                         ),
+      //                       ],
+      //                     ),
+      //                   ),
+      //                 );
+      //               },
+      //               childCount: snapshot.data!.length,
+      //             ),
+      //           ),
+      //         ],
+      //       );
+      //     }
+      //     return const Center(child: Text('単語が登録されていません'));
+      //   },
+      // ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showWordModal(context, wordBook.wordBookId, null);

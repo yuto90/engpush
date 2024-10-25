@@ -59,7 +59,6 @@ class DynamodbUtil {
       endpointTemplate: '/word/{word_book_Id}',
       pathParams: {'word_book_Id': wordBookId},
     );
-    print(response.body);
     return List<Map<String, dynamic>>.from(json.decode(response.body));
   }
 
