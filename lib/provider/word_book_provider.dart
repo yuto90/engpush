@@ -3,11 +3,11 @@ import 'package:engpush/model/word_book/word_book_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final wordBookProvider =
-    StateNotifierProvider.autoDispose<WordBookNotifier, List<WordBook>>(
+    StateNotifierProvider<WordBookNotifier, List<WordBook>>(
         (ref) => WordBookNotifier());
 
 class WordBookNotifier extends StateNotifier<List<WordBook>> {
-  WordBookNotifier() : super(const [WordBook()]);
+  WordBookNotifier() : super(const []);
 
   final DynamodbUtil dynamodbUtil = DynamodbUtil();
 
