@@ -164,33 +164,27 @@ class __$$WordBookImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$WordBookImpl implements _WordBook {
   const _$WordBookImpl(
-      {this.name = '',
-      this.wordBookId = '',
-      this.pushNotificationEnabled = false,
-      this.lastWordIndex = 0,
-      this.createdAt = 0,
-      this.updatedAt = 0});
+      {required this.name,
+      required this.wordBookId,
+      required this.pushNotificationEnabled,
+      required this.lastWordIndex,
+      required this.createdAt,
+      required this.updatedAt});
 
   factory _$WordBookImpl.fromJson(Map<String, dynamic> json) =>
       _$$WordBookImplFromJson(json);
 
   @override
-  @JsonKey()
   final String name;
   @override
-  @JsonKey()
   final String wordBookId;
   @override
-  @JsonKey()
   final bool pushNotificationEnabled;
   @override
-  @JsonKey()
   final int lastWordIndex;
   @override
-  @JsonKey()
   final int createdAt;
   @override
-  @JsonKey()
   final int updatedAt;
 
   @override
@@ -238,12 +232,12 @@ class _$WordBookImpl implements _WordBook {
 
 abstract class _WordBook implements WordBook {
   const factory _WordBook(
-      {final String name,
-      final String wordBookId,
-      final bool pushNotificationEnabled,
-      final int lastWordIndex,
-      final int createdAt,
-      final int updatedAt}) = _$WordBookImpl;
+      {required final String name,
+      required final String wordBookId,
+      required final bool pushNotificationEnabled,
+      required final int lastWordIndex,
+      required final int createdAt,
+      required final int updatedAt}) = _$WordBookImpl;
 
   factory _WordBook.fromJson(Map<String, dynamic> json) =
       _$WordBookImpl.fromJson;
