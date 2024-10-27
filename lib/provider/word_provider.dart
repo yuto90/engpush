@@ -56,44 +56,21 @@ class WordNotifier extends AsyncNotifier<List<Word>> {
     );
   }
 
-  Future<void> addNewWord(String wordBookId) async {
-    // fetchedWordBookProviderのstateにすでにwordBookIdの単語があれば、関数を終了
-    if (ref.read(fetchedWordBookProvider).contains(wordBookId)) {
-      return;
-    }
-
-    //fetchedWordBookProvideのstateにwordBookIdを追加
-    ref.read(fetchedWordBookProvider.notifier).addId(wordBookId);
-
-    // ローディング状態に変更
-    state = const AsyncLoading();
-
-    final words =
-        await AsyncValue.guard(() => dynamodbUtil.getWordList(wordBookId));
-
-    state = words.when(
-      data: (words) {
-        return AsyncData([
-          ...state.value ?? [],
-          ...words.map((e) {
-            return Word(
-              wordBookId: e['WordBookId'],
-              wordId: e['WordId'],
-              word: e['Word'],
-              mean: e['Mean'],
-              partOfSpeech: e['PartOfSpeech'],
-              lastNotified: e['LastNotified'],
-              pushNotificationEnabled: e['PushNotificationEnabled'],
-              notificationCount: e['NotificationCount'],
-              createdAt: e['CreatedAt'],
-              updatedAt: e['UpdatedAt'],
-            );
-          }).toList()
-        ]);
-      },
-      loading: () => const AsyncLoading(),
-      error: (err, stack) => AsyncError(err, stack),
+  Future<void> addNewWord(Map<String, dynamic> newWord) async {
+    final word = Word(
+      wordBookId: newWord['WordBookId'],
+      wordId: newWord['WordId'],
+      word: newWord['Word'],
+      mean: newWord['Mean'],
+      partOfSpeech: newWord['PartOfSpeech'],
+      lastNotified: newWord['LastNotified'],
+      pushNotificationEnabled: newWord['PushNotificationEnabled'],
+      notificationCount: newWord['NotificationCount'],
+      createdAt: newWord['CreatedAt'],
+      updatedAt: newWord['UpdatedAt'],
     );
+
+    state = AsyncData([...state.value ?? [], word]);
   }
 }
 

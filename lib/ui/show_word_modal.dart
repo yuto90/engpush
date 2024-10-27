@@ -1,3 +1,4 @@
+import 'package:engpush/provider/word_provider.dart';
 import 'package:engpush/util/aws_dynamodb.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -81,12 +82,13 @@ void showWordModal(
             onPressed: () async {
               if (formKey.currentState!.validate()) {
                 if (word == null) {
-                  await dynamodbUtil.createWord(
+                  final newWord = await dynamodbUtil.createWord(
                     wordBookId,
                     wordController.text,
                     meanController.text,
                     selectedPartOfSpeech,
                   );
+                  ref.read(wordProvider.notifier).addNewWord(newWord);
                 } else {
                   dynamodbUtil.updateWord(
                     wordBookId,
