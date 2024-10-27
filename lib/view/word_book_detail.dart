@@ -48,7 +48,7 @@ class WordBookDetailPageState extends ConsumerState<WordBookDetailPage> {
               .toList();
 
           return words.isEmpty
-              ? const Text('まだ単語が登録されていません')
+              ? const Center(child: Text('まだ単語が登録されていません'))
               : CustomScrollView(
                   slivers: [
                     SliverList(
