@@ -5,13 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class DynamodbUtil {
   // todo: 環境によってURLを変更する
-  static const String baseUrl =
-      'https://aln6fgcqxj.execute-api.ap-northeast-1.amazonaws.com/dev';
-
-  static const Map<String, String> defaultHeaders = {
-    'Content-Type': 'application/json'
-  };
-
   final _apiClient = ApiClient();
 
   /// /word_book ==========================================

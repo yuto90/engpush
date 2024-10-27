@@ -23,6 +23,7 @@ class ApiClient {
   }
 
   void _handleResponse(http.Response response, String methodName) {
+    print(methodName);
     if (response.statusCode < 200 || response.statusCode >= 300) {
       throw Exception(
           'Failed to $methodName: ${response.statusCode} ${response.body}');
@@ -46,7 +47,6 @@ class ApiClient {
     //todo: cognitoIdTokenが期限切れだったら再度取得する
     final cognitoIdToken = await _getCognitoIdToken();
     final endpoint = _buildEndpoint(endpointTemplate, pathParams);
-    print(endpoint);
     final uri =
         Uri.parse('$_baseUrl$endpoint').replace(queryParameters: queryParams);
     final response = await http.get(
