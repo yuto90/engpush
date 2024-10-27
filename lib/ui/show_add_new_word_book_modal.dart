@@ -1,8 +1,10 @@
+import 'package:engpush/provider/word_book_provider.dart';
 import 'package:engpush/util/aws_dynamodb.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-void showAddNewWordBookModal(BuildContext context) {
+void showAddNewWordBookModal(BuildContext context, WidgetRef ref) {
   final DynamodbUtil dynamodbUtil = DynamodbUtil();
   final formKey = GlobalKey<FormState>();
   final TextEditingController controller = TextEditingController();
@@ -35,9 +37,11 @@ void showAddNewWordBookModal(BuildContext context) {
           ),
           ElevatedButton(
             child: const Text('追加'),
-            onPressed: () {
+            onPressed: () async {
               if (formKey.currentState!.validate()) {
-                dynamodbUtil.createWordBook(controller.text);
+                // 単語帳を作成した後、単語帳リストを再取得して状態を更新
+                await dynamodbUtil.createWordBook(controller.text);
+                await ref.read(wordBookProvider.notifier).fetchWordBookList();
                 context.pop();
               }
             },

@@ -1,8 +1,11 @@
+import 'package:engpush/provider/word_provider.dart';
 import 'package:engpush/util/aws_dynamodb.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-void showWordModal(BuildContext context, String wordBookId, String? wordId,
+void showWordModal(
+    BuildContext context, WidgetRef ref, String wordBookId, String? wordId,
     {Map<String, String>? word}) {
   final DynamodbUtil dynamodbUtil = DynamodbUtil();
   final formKey = GlobalKey<FormState>();
@@ -76,15 +79,16 @@ void showWordModal(BuildContext context, String wordBookId, String? wordId,
           ),
           ElevatedButton(
             child: Text(word == null ? '追加' : '更新'),
-            onPressed: () {
+            onPressed: () async {
               if (formKey.currentState!.validate()) {
                 if (word == null) {
-                  dynamodbUtil.createWord(
+                  final newWord = await dynamodbUtil.createWord(
                     wordBookId,
                     wordController.text,
                     meanController.text,
                     selectedPartOfSpeech,
                   );
+                  ref.read(wordProvider.notifier).addNewWord(newWord);
                 } else {
                   dynamodbUtil.updateWord(
                     wordBookId,

@@ -8,13 +8,12 @@ part of 'word_book_model.dart';
 
 _$WordBookImpl _$$WordBookImplFromJson(Map<String, dynamic> json) =>
     _$WordBookImpl(
-      name: json['name'] as String? ?? '',
-      wordBookId: json['wordBookId'] as String? ?? '',
-      pushNotificationEnabled:
-          json['pushNotificationEnabled'] as bool? ?? false,
-      lastWordIndex: (json['lastWordIndex'] as num?)?.toInt() ?? 0,
-      createdAt: (json['createdAt'] as num?)?.toInt() ?? 0,
-      updatedAt: (json['updatedAt'] as num?)?.toInt() ?? 0,
+      name: json['name'] as String,
+      wordBookId: json['wordBookId'] as String,
+      pushNotificationEnabled: json['pushNotificationEnabled'] as bool,
+      lastWordIndex: (json['lastWordIndex'] as num).toInt(),
+      createdAt: (json['createdAt'] as num).toInt(),
+      updatedAt: (json['updatedAt'] as num).toInt(),
     );
 
 Map<String, dynamic> _$$WordBookImplToJson(_$WordBookImpl instance) =>
