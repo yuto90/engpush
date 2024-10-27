@@ -35,7 +35,7 @@ class Base extends ConsumerWidget {
       floatingActionButton: currentIndex == 1
           ? FloatingActionButton(
               onPressed: () {
-                showAddNewWordBookModal(context);
+                showAddNewWordBookModal(context, ref);
               },
               tooltip: 'Increment',
               child: const Icon(Icons.add),
