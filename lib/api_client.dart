@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiClient {
   final String _baseUrl =
-      'https://aln6fgcqxj.execute-api.ap-northeast-1.amazonaws.com/dev';
+      'https://9rost36j36.execute-api.ap-northeast-1.amazonaws.com/dev';
   final Map<String, String> _defaultHeaders = {
     'Content-Type': 'application/json'
   };
