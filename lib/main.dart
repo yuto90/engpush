@@ -13,11 +13,11 @@ import 'package:engpush/route.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // バックグラウンドメッセージハンドラ
-@pragma('vm:entry-point')
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  print('Handling a background message: ${message.messageId}');
-}
+// @pragma('vm:entry-point')
+// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+//   await Firebase.initializeApp();
+//   print('Handling a background message: ${message.messageId}');
+// }
 
 Future<void> _configureAmplify() async {
   try {
@@ -37,22 +37,22 @@ Future<void> main() async {
   await _configureAmplify();
 
   // Firebaseの初期化
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  // await Firebase.initializeApp(
+  //   options: DefaultFirebaseOptions.currentPlatform,
+  // );
 
   // 通知権限のリクエスト
-  await FirebaseMessaging.instance.requestPermission(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
+  // await FirebaseMessaging.instance.requestPermission(
+  //   alert: true,
+  //   badge: true,
+  //   sound: true,
+  // );
 
-  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
+  // await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+  //   alert: true,
+  //   badge: true,
+  //   sound: true,
+  // );
 
   // todo: ローカルプッシュの方がいいかもなので一旦コメントアウト
   // todo: エラーハンドリング
@@ -63,19 +63,19 @@ Future<void> main() async {
   // await initAwsSns(fcmToken!);
 
   // バックグラウンドメッセージハンドラの設定
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   // フォアグラウンドでのメッセージハンドラ
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    print('Received message: ${message.notification?.title}');
-    // フォアグラウンドでの通知処理
-  });
+  // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+  //   print('Received message: ${message.notification?.title}');
+  //   // フォアグラウンドでの通知処理
+  // });
 
   // アプリが開かれた時のメッセージハンドラ
-  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    print('Message opened app: ${message.notification?.title}');
-    // バックグラウンドでアプリを開いた時の処理
-  });
+  // FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+  //   print('Message opened app: ${message.notification?.title}');
+  //   // バックグラウンドでアプリを開いた時の処理
+  // });
   runApp(const ProviderScope(child: MyApp()));
 }
 
