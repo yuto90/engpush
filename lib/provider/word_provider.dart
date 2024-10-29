@@ -72,6 +72,13 @@ class WordNotifier extends AsyncNotifier<List<Word>> {
 
     state = AsyncData([...state.value ?? [], word]);
   }
+
+  Future<void> deleteWord(String wordId) async {
+    // stateのwordIdが一致するWordを削除
+    state = AsyncData(
+        state.value?.where((element) => element.wordId != wordId).toList() ??
+            []);
+  }
 }
 
 // アプリ起動から初回Fetchした単語帳IDを保持するProvider

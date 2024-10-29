@@ -150,7 +150,7 @@ class DynamodbUtil {
     String wordId,
   ) async {
     final response = await _apiClient.delete(
-      endpointTemplate: '/word/{word_book_Id}',
+      endpointTemplate: '/word_book/{word_book_Id}/word/{word_Id}',
       pathParams: {'word_book_Id': wordBookId, 'word_Id': wordId},
     );
 
