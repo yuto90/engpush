@@ -1,14 +1,15 @@
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify_flutter.dart';
 import 'package:engpush/amplifyconfiguration.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:engpush/ios_local_push.dart';
+// import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:engpush/aws_sns_init.dart';
-import 'package:engpush/firebase_options.dart';
+// import 'package:engpush/aws_sns_init.dart';
+// import 'package:engpush/firebase_options.dart';
 import 'package:engpush/route.dart';
 import 'package:google_fonts/google_fonts.dart';
 
