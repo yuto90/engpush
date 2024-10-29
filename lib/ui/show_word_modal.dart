@@ -74,6 +74,14 @@ void showWordModal(
         ),
         actions: [
           TextButton(
+            child: const Text('削除'),
+            onPressed: () {
+              dynamodbUtil.deleteWord(wordBookId, wordId!);
+              ref.read(wordProvider.notifier).deleteWord(wordId);
+              context.pop();
+            },
+          ),
+          TextButton(
             child: const Text('キャンセル'),
             onPressed: () => context.pop(),
           ),
