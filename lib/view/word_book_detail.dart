@@ -1,5 +1,4 @@
 import 'package:engpush/const/bottom_nav_bar_items.dart';
-import 'package:engpush/model/word/word_model.dart';
 import 'package:engpush/model/word_book/word_book_model.dart';
 import 'package:engpush/provider/bottom_nav_index_provider.dart';
 import 'package:engpush/provider/word_provider.dart';
@@ -7,6 +6,7 @@ import 'package:engpush/ui/show_word_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class WordBookDetailPage extends ConsumerStatefulWidget {
   final WordBook wordBook;
@@ -49,31 +49,60 @@ class WordBookDetailPageState extends ConsumerState<WordBookDetailPage> {
 
           return words.isEmpty
               ? const Center(child: Text('まだ単語が登録されていません'))
-              : CustomScrollView(
-                  slivers: [
-                    SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          return Container(
-                            decoration: const BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(color: Colors.grey),
+              : Column(
+                  children: [
+                    Expanded(
+                      flex: 10,
+                      child: Container(
+                        child: PieChart(
+                          PieChartData(
+                            sections: [
+                              PieChartSectionData(
+                                color: Colors.green,
+                                value: words.length.toDouble(),
+                                title: 'Words',
+                                radius: 50,
+                                titleStyle: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
                               ),
-                            ),
-                            child: ListTile(
-                              title: Text(
-                                words[index].word,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              subtitle: Text(words[index].mean),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(words[index].partOfSpeech),
-                                  IconButton(
-                                    icon: const Icon(Icons.edit),
-                                    onPressed: () {
+                              // Add more sections if needed
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        color: Colors.blue,
+                      ),
+                      flex: 1,
+                    ),
+                    Expanded(
+                      flex: 20,
+                      child: CustomScrollView(
+                        slivers: [
+                          SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (context, index) {
+                                return Container(
+                                  decoration: const BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(color: Colors.grey),
+                                    ),
+                                  ),
+                                  child: CheckboxListTile(
+                                    value: true,
+                                    title: Text(
+                                      words[index].word,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    subtitle: Text(
+                                        '[${words[index].partOfSpeech}]${words[index].mean}'),
+                                    onChanged: (bool? value) {
                                       showWordModal(
                                         context,
                                         ref,
@@ -88,12 +117,12 @@ class WordBookDetailPageState extends ConsumerState<WordBookDetailPage> {
                                       );
                                     },
                                   ),
-                                ],
-                              ),
+                                );
+                              },
+                              childCount: words.length,
                             ),
-                          );
-                        },
-                        childCount: words.length,
+                          ),
+                        ],
                       ),
                     ),
                   ],
