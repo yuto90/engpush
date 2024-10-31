@@ -85,7 +85,7 @@ void showWordModal(
             child: const Text('キャンセル'),
             onPressed: () => context.pop(),
           ),
-          ElevatedButton(
+          TextButton(
             child: Text(word == null ? '追加' : '更新'),
             onPressed: () async {
               if (formKey.currentState!.validate()) {
