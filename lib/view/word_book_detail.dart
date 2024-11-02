@@ -3,10 +3,13 @@ import 'package:engpush/model/word_book/word_book_model.dart';
 import 'package:engpush/provider/bottom_nav_index_provider.dart';
 import 'package:engpush/provider/word_provider.dart';
 import 'package:engpush/ui/show_word_modal.dart';
+import 'package:engpush/util/notification.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:engpush/provider/reminder_provider.dart';
 
 class WordBookDetailPage extends ConsumerStatefulWidget {
   final WordBook wordBook;
@@ -36,6 +39,14 @@ class WordBookDetailPageState extends ConsumerState<WordBookDetailPage> {
     final currentIndex = ref.watch(bottomNavIndexProvider);
     final bottomNavIndexNotifier = ref.watch(bottomNavIndexProvider.notifier);
     final asyncWords = ref.watch(wordProvider);
+    final reminderNumberNotifier = ref.watch(reminderNumberProvider.notifier);
+    final reminderTimeNotifier = ref.watch(reminderTimeProvider.notifier);
+
+    final _numbers = List.generate(59, (index) => (index + 1).toString());
+    final _times = [
+      "時間",
+      "分",
+    ];
 
     return Scaffold(
       appBar: AppBar(title: Text(widget.wordBook.name)),
@@ -53,35 +64,6 @@ class WordBookDetailPageState extends ConsumerState<WordBookDetailPage> {
                   children: [
                     Expanded(
                       flex: 10,
-                      child: Container(
-                        child: PieChart(
-                          PieChartData(
-                            sections: [
-                              PieChartSectionData(
-                                color: Colors.green,
-                                value: words.length.toDouble(),
-                                title: 'Words',
-                                radius: 50,
-                                titleStyle: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              // Add more sections if needed
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        color: Colors.blue,
-                      ),
-                      flex: 1,
-                    ),
-                    Expanded(
-                      flex: 20,
                       child: CustomScrollView(
                         slivers: [
                           SliverList(
@@ -125,21 +107,70 @@ class WordBookDetailPageState extends ConsumerState<WordBookDetailPage> {
                         ],
                       ),
                     ),
+                    Expanded(
+                      flex: 2,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          height: 10,
+                          width: double.infinity,
+                          decoration: const BoxDecoration(
+                            color: const Color.fromARGB(255, 99, 185, 255),
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10.0),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: CupertinoPicker(
+                                  itemExtent: 30.0,
+                                  children:
+                                      _numbers.map((e) => Text(e)).toList(),
+                                  onSelectedItemChanged: (newValue) {
+                                    reminderNumberNotifier
+                                        .changeDisplay(newValue + 1);
+                                  },
+                                ),
+                              ),
+                              Expanded(
+                                child: CupertinoPicker(
+                                  itemExtent: 30.0,
+                                  children: _times.map((e) => Text(e)).toList(),
+                                  onSelectedItemChanged: (newValue) {
+                                    reminderTimeNotifier
+                                        .changeDisplay(newValue);
+                                  },
+                                ),
+                              ),
+                              Expanded(
+                                child: TextButton(
+                                  onPressed: () {
+                                    print('リマインダーをセット');
+                                    schedulePush('リマインダー', 'リマインダーをセットしました');
+                                  },
+                                  child: const Text('リマインダーをセット'),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 );
         },
         error: (error, _) => Center(child: Text('Error: $error')),
         loading: () => const Center(child: CircularProgressIndicator()),
       ),
-      floatingActionButton: currentIndex == 1
-          ? FloatingActionButton(
-              onPressed: () {
-                showWordModal(context, ref, widget.wordBook.wordBookId, null);
-              },
-              tooltip: 'Increment',
-              child: const Icon(Icons.add),
-            )
-          : null,
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showWordModal(context, ref, widget.wordBook.wordBookId, null);
+        },
+        tooltip: 'Increment',
+        child: const Icon(Icons.add),
+      ),
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: currentIndex,
           onTap: (index) {
