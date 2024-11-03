@@ -25,14 +25,29 @@ class IOSLocalPush {
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
-  Future<void> showNotification(int id, String title, String body) async {
+  // Future<void> showNotification(int id, String title, String body) async {
+  //   const DarwinNotificationDetails iOSPlatformChannelSpecifics =
+  //       DarwinNotificationDetails();
+  //   const NotificationDetails platformChannelSpecifics =
+  //       NotificationDetails(iOS: iOSPlatformChannelSpecifics);
+
+  //   await flutterLocalNotificationsPlugin.show(
+  //     id,
+  //     title,
+  //     body,
+  //     platformChannelSpecifics,
+  //   );
+  // }
+
+  // 即時に通知を送る関数
+  Future<void> showImmediateNotification(String title, String body) async {
     const DarwinNotificationDetails iOSPlatformChannelSpecifics =
         DarwinNotificationDetails();
     const NotificationDetails platformChannelSpecifics =
         NotificationDetails(iOS: iOSPlatformChannelSpecifics);
 
     await flutterLocalNotificationsPlugin.show(
-      id,
+      0, // 通知IDを0に設定
       title,
       body,
       platformChannelSpecifics,
@@ -41,7 +56,7 @@ class IOSLocalPush {
 
   // 通知をスケジュールする関数
   Future<void> scheduleNotification(
-      int id, String title, String body, DateTime scheduledTime) async {
+      String title, String body, DateTime scheduledTime) async {
     const DarwinNotificationDetails iOSPlatformChannelSpecifics =
         DarwinNotificationDetails();
     const NotificationDetails platformChannelSpecifics =
@@ -51,7 +66,7 @@ class IOSLocalPush {
     final tzScheduledTime = tz.TZDateTime.from(scheduledTime, local);
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
-      id,
+      0,
       title,
       body,
       tzScheduledTime,

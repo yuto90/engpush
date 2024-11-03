@@ -3,13 +3,12 @@ import 'package:engpush/model/word_book/word_book_model.dart';
 import 'package:engpush/provider/bottom_nav_index_provider.dart';
 import 'package:engpush/provider/word_provider.dart';
 import 'package:engpush/ui/show_word_modal.dart';
-import 'package:engpush/util/notification.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:engpush/provider/reminder_provider.dart';
+import 'package:engpush/ios_local_push.dart';
 
 class WordBookDetailPage extends ConsumerStatefulWidget {
   final WordBook wordBook;
@@ -24,6 +23,8 @@ class WordBookDetailPage extends ConsumerStatefulWidget {
 }
 
 class WordBookDetailPageState extends ConsumerState<WordBookDetailPage> {
+  final IOSLocalPush iosLocalPush = IOSLocalPush();
+
   @override
   void initState() {
     super.initState();
@@ -39,14 +40,12 @@ class WordBookDetailPageState extends ConsumerState<WordBookDetailPage> {
     final currentIndex = ref.watch(bottomNavIndexProvider);
     final bottomNavIndexNotifier = ref.watch(bottomNavIndexProvider.notifier);
     final asyncWords = ref.watch(wordProvider);
-    final reminderNumberNotifier = ref.watch(reminderNumberProvider.notifier);
-    final reminderTimeNotifier = ref.watch(reminderTimeProvider.notifier);
+
+    final reminder = ref.watch(reminderProvider);
+    final reminderNotifier = ref.watch(reminderProvider.notifier);
 
     final _numbers = List.generate(59, (index) => (index + 1).toString());
-    final _times = [
-      "時間",
-      "分",
-    ];
+    final _times = ["時間", "分", "秒"];
 
     return Scaffold(
       appBar: AppBar(title: Text(widget.wordBook.name)),
@@ -129,8 +128,7 @@ class WordBookDetailPageState extends ConsumerState<WordBookDetailPage> {
                                   children:
                                       _numbers.map((e) => Text(e)).toList(),
                                   onSelectedItemChanged: (newValue) {
-                                    reminderNumberNotifier
-                                        .changeDisplay(newValue + 1);
+                                    reminderNotifier.changeNumber(newValue + 1);
                                   },
                                 ),
                               ),
@@ -139,16 +137,32 @@ class WordBookDetailPageState extends ConsumerState<WordBookDetailPage> {
                                   itemExtent: 30.0,
                                   children: _times.map((e) => Text(e)).toList(),
                                   onSelectedItemChanged: (newValue) {
-                                    reminderTimeNotifier
-                                        .changeDisplay(newValue);
+                                    reminderNotifier.changeTime(newValue);
                                   },
                                 ),
                               ),
                               Expanded(
                                 child: TextButton(
                                   onPressed: () {
-                                    print('リマインダーをセット');
-                                    schedulePush('リマインダー', 'リマインダーをセットしました');
+                                    final reminderValue = reminder;
+                                    iosLocalPush.scheduleNotification(
+                                      '通知タイトル',
+                                      '通知内容',
+                                      DateTime.now().add(
+                                        Duration(
+                                          hours: reminderValue.time == 0
+                                              ? reminderValue.number
+                                              : 0,
+                                          minutes: reminderValue.time == 1
+                                              ? reminderValue.number
+                                              : 0,
+                                          seconds: reminderValue.time == 2
+                                              ? reminderValue.number
+                                              : 0,
+                                        ),
+                                      ),
+                                    );
+                                    print(reminderValue);
                                   },
                                   child: const Text('リマインダーをセット'),
                                 ),
