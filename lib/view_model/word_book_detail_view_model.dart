@@ -8,6 +8,8 @@ final wordBookDetailViewModelProvider = Provider((ref) {
   return WordBookDetailViewModel(ref);
 });
 
+final checkedWordsProvider = StateProvider<Set<String>>((ref) => {});
+
 class WordBookDetailViewModel {
   final ProviderRef ref;
   final IOSLocalPush iosLocalPush = IOSLocalPush();
@@ -39,5 +41,19 @@ class WordBookDetailViewModel {
       ),
     );
     print(reminder);
+  }
+
+  void toggleWordCheck(String wordId) {
+    final checkedWords = ref.read(checkedWordsProvider).toSet();
+    if (checkedWords.contains(wordId)) {
+      checkedWords.remove(wordId);
+    } else {
+      checkedWords.add(wordId);
+    }
+    ref.read(checkedWordsProvider.notifier).state = checkedWords;
+  }
+
+  bool isWordChecked(String wordId) {
+    return ref.read(checkedWordsProvider).contains(wordId);
   }
 }

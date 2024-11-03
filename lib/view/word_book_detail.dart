@@ -43,6 +43,7 @@ class WordBookDetailPageState extends ConsumerState<WordBookDetailPage> {
     final currentIndex = ref.watch(bottomNavIndexProvider);
     final bottomNavIndexNotifier = ref.watch(bottomNavIndexProvider.notifier);
     final asyncWords = ref.watch(wordProvider);
+    final checkedWords = ref.watch(checkedWordsProvider).toSet();
 
     final reminderNotifier = ref.watch(reminderProvider.notifier);
     final viewModel = ref.read(wordBookDetailViewModelProvider);
@@ -71,7 +72,8 @@ class WordBookDetailPageState extends ConsumerState<WordBookDetailPage> {
                                     ),
                                   ),
                                   child: CheckboxListTile(
-                                    value: true,
+                                    value: checkedWords
+                                        .contains(words[index].wordId),
                                     title: Text(
                                       words[index].word,
                                       style: const TextStyle(
@@ -79,19 +81,26 @@ class WordBookDetailPageState extends ConsumerState<WordBookDetailPage> {
                                     ),
                                     subtitle: Text(
                                         '[${words[index].partOfSpeech}]${words[index].mean}'),
+                                    secondary: IconButton(
+                                      icon: const Icon(Icons.edit),
+                                      onPressed: () {
+                                        showWordModal(
+                                          context,
+                                          ref,
+                                          widget.wordBook.wordBookId,
+                                          words[index].wordId,
+                                          word: {
+                                            'word': words[index].word,
+                                            'meaning': words[index].mean,
+                                            'partOfSpeech':
+                                                words[index].partOfSpeech,
+                                          },
+                                        );
+                                      },
+                                    ),
                                     onChanged: (bool? value) {
-                                      showWordModal(
-                                        context,
-                                        ref,
-                                        widget.wordBook.wordBookId,
-                                        words[index].wordId,
-                                        word: {
-                                          'word': words[index].word,
-                                          'meaning': words[index].mean,
-                                          'partOfSpeech':
-                                              words[index].partOfSpeech,
-                                        },
-                                      );
+                                      viewModel
+                                          .toggleWordCheck(words[index].wordId);
                                     },
                                   ),
                                 );
