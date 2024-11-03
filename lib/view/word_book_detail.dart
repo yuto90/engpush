@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:engpush/provider/reminder_provider.dart';
 import 'package:engpush/ios_local_push.dart';
+import 'package:engpush/view_model/word_book_detail_view_model.dart';
 
 class WordBookDetailPage extends ConsumerStatefulWidget {
   final WordBook wordBook;
@@ -31,7 +32,9 @@ class WordBookDetailPageState extends ConsumerState<WordBookDetailPage> {
 
     // 画面の描画が始まったタイミングで状態の変更
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(wordProvider.notifier).fetchWordList(widget.wordBook.wordBookId);
+      ref
+          .read(wordBookDetailViewModelProvider)
+          .fetchWords(widget.wordBook.wordBookId);
     });
   }
 
@@ -41,21 +44,14 @@ class WordBookDetailPageState extends ConsumerState<WordBookDetailPage> {
     final bottomNavIndexNotifier = ref.watch(bottomNavIndexProvider.notifier);
     final asyncWords = ref.watch(wordProvider);
 
-    final reminder = ref.watch(reminderProvider);
     final reminderNotifier = ref.watch(reminderProvider.notifier);
-
-    final _numbers = List.generate(59, (index) => (index + 1).toString());
-    final _times = ["時間", "分", "秒"];
+    final viewModel = ref.read(wordBookDetailViewModelProvider);
 
     return Scaffold(
       appBar: AppBar(title: Text(widget.wordBook.name)),
       body: asyncWords.when(
         data: (words) {
-          // word内のwordBookIdがwidget.wordBook.wordBookIdと一致するものだけを抽出
-          // todo: Viewにロジック書きたくない
-          words = words
-              .where((word) => word.wordBookId == widget.wordBook.wordBookId)
-              .toList();
+          words = viewModel.filterWords(words, widget.wordBook.wordBookId);
 
           return words.isEmpty
               ? const Center(child: Text('まだ単語が登録されていません'))
@@ -125,8 +121,9 @@ class WordBookDetailPageState extends ConsumerState<WordBookDetailPage> {
                               Expanded(
                                 child: CupertinoPicker(
                                   itemExtent: 30.0,
-                                  children:
-                                      _numbers.map((e) => Text(e)).toList(),
+                                  children: viewModel.numbers
+                                      .map((e) => Text(e))
+                                      .toList(),
                                   onSelectedItemChanged: (newValue) {
                                     reminderNotifier.changeNumber(newValue + 1);
                                   },
@@ -135,7 +132,9 @@ class WordBookDetailPageState extends ConsumerState<WordBookDetailPage> {
                               Expanded(
                                 child: CupertinoPicker(
                                   itemExtent: 30.0,
-                                  children: _times.map((e) => Text(e)).toList(),
+                                  children: viewModel.times
+                                      .map((e) => Text(e))
+                                      .toList(),
                                   onSelectedItemChanged: (newValue) {
                                     reminderNotifier.changeTime(newValue);
                                   },
@@ -144,25 +143,7 @@ class WordBookDetailPageState extends ConsumerState<WordBookDetailPage> {
                               Expanded(
                                 child: TextButton(
                                   onPressed: () {
-                                    final reminderValue = reminder;
-                                    iosLocalPush.scheduleNotification(
-                                      '通知タイトル',
-                                      '通知内容',
-                                      DateTime.now().add(
-                                        Duration(
-                                          hours: reminderValue.time == 0
-                                              ? reminderValue.number
-                                              : 0,
-                                          minutes: reminderValue.time == 1
-                                              ? reminderValue.number
-                                              : 0,
-                                          seconds: reminderValue.time == 2
-                                              ? reminderValue.number
-                                              : 0,
-                                        ),
-                                      ),
-                                    );
-                                    print(reminderValue);
+                                    viewModel.scheduleReminder();
                                   },
                                   child: const Text('リマインダーをセット'),
                                 ),
