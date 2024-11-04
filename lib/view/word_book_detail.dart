@@ -157,6 +157,22 @@ class WordBookDetailPageState extends ConsumerState<WordBookDetailPage> {
                                   child: const Text('リマインダーをセット'),
                                 ),
                               ),
+                              Expanded(
+                                child: TextButton(
+                                  onPressed: () {
+                                    viewModel.cancelReminder();
+                                  },
+                                  child: const Text('リマインダーを解除'),
+                                ),
+                              ),
+                              Expanded(
+                                child: TextButton(
+                                  onPressed: () {
+                                    viewModel.scheduleRepeatingReminder();
+                                  },
+                                  child: const Text('繰り返しリマインダーをセット'),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -168,13 +184,13 @@ class WordBookDetailPageState extends ConsumerState<WordBookDetailPage> {
         error: (error, _) => Center(child: Text('Error: $error')),
         loading: () => const Center(child: CircularProgressIndicator()),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showWordModal(context, ref, widget.wordBook.wordBookId, null);
-        },
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     showWordModal(context, ref, widget.wordBook.wordBookId, null);
+      //   },
+      //   tooltip: 'Increment',
+      //   child: const Icon(Icons.add),
+      // ),
       bottomNavigationBar: BottomNavigationBar(
           currentIndex: currentIndex,
           onTap: (index) {

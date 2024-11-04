@@ -43,6 +43,27 @@ class WordBookDetailViewModel {
     print(reminder);
   }
 
+  void scheduleRepeatingReminder() {
+    final reminder = ref.read(reminderProvider);
+    final repeatInterval = Duration(
+      hours: reminder.time == 0 ? reminder.number : 0,
+      minutes: reminder.time == 1 ? reminder.number : 0,
+      seconds: reminder.time == 2 ? reminder.number : 0,
+    );
+
+    iosLocalPush.scheduleRepeatingNotification(
+      '繰り返し通知タイトル',
+      '繰り返し通知内容',
+      repeatInterval,
+    );
+    print('繰り返しリマインダーを設定しました: $reminder');
+  }
+
+  void cancelReminder() {
+    iosLocalPush.cancelNotification(0);
+    print('リマインダーを解除しました');
+  }
+
   void toggleWordCheck(String wordId) {
     final checkedWords = ref.read(checkedWordsProvider).toSet();
     if (checkedWords.contains(wordId)) {
