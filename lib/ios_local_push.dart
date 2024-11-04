@@ -25,21 +25,7 @@ class IOSLocalPush {
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
-  // Future<void> showNotification(int id, String title, String body) async {
-  //   const DarwinNotificationDetails iOSPlatformChannelSpecifics =
-  //       DarwinNotificationDetails();
-  //   const NotificationDetails platformChannelSpecifics =
-  //       NotificationDetails(iOS: iOSPlatformChannelSpecifics);
-
-  //   await flutterLocalNotificationsPlugin.show(
-  //     id,
-  //     title,
-  //     body,
-  //     platformChannelSpecifics,
-  //   );
-  // }
-
-  // 即時に通知を送る関数
+  // 即時に通知を送るメソッド
   Future<void> showImmediateNotification(String title, String body) async {
     const DarwinNotificationDetails iOSPlatformChannelSpecifics =
         DarwinNotificationDetails();
@@ -54,7 +40,7 @@ class IOSLocalPush {
     );
   }
 
-  // 通知をスケジュールする関数
+  // 単発通知をスケジュールするメソッド
   Future<void> scheduleNotification(
       String title, String body, DateTime scheduledTime) async {
     const DarwinNotificationDetails iOSPlatformChannelSpecifics =
@@ -77,7 +63,41 @@ class IOSLocalPush {
     );
   }
 
+  // 通知を繰り返しスケジュールするメソッド
+  Future<void> scheduleRepeatingNotification(
+      String title, String body, Duration repeatInterval) async {
+    const DarwinNotificationDetails iOSPlatformChannelSpecifics =
+        DarwinNotificationDetails();
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(iOS: iOSPlatformChannelSpecifics);
+
+    await flutterLocalNotificationsPlugin.periodicallyShow(
+      0,
+      title,
+      body,
+      RepeatInterval.everyMinute, // 繰り返し間隔を設定
+      platformChannelSpecifics,
+      androidAllowWhileIdle: true,
+    );
+  }
+
+  // 特定のIDの通知をキャンセルするメソッド
   Future<void> cancelNotification(int id) async {
     await flutterLocalNotificationsPlugin.cancel(id);
+  }
+
+  // すべての通知をキャンセルするメソッド
+  Future<void> cancelAllNotifications() async {
+    await flutterLocalNotificationsPlugin.cancelAll();
+  }
+
+  // 予約済みの通知を取得するメソッド
+  Future<void> getScheduled() async {
+    final List<PendingNotificationRequest> pendingNotificationRequests =
+        await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+    for (var pendingNotificationRequest in pendingNotificationRequests) {
+      print(
+          '予約済みの通知: [id: ${pendingNotificationRequest.id}, title: ${pendingNotificationRequest.title}, body: ${pendingNotificationRequest.body}, payload: ${pendingNotificationRequest.payload}]');
+    }
   }
 }
