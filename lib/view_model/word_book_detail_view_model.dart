@@ -66,6 +66,11 @@ class WordBookDetailViewModel {
     print('リマインダーを解除しました');
   }
 
+  void cancelAllReminder() {
+    iosLocalPush.cancelAllNotifications();
+    print('リマインダーを解除しました');
+  }
+
   void toggleWordCheck(String wordId) {
     final checkedWords = ref.read(checkedWordsProvider).toSet();
     if (checkedWords.contains(wordId)) {
