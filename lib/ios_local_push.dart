@@ -71,13 +71,16 @@ class IOSLocalPush {
     const NotificationDetails platformChannelSpecifics =
         NotificationDetails(iOS: iOSPlatformChannelSpecifics);
 
-    await flutterLocalNotificationsPlugin.periodicallyShow(
-      0,
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      DateTime.now().millisecond,
       title,
       body,
-      RepeatInterval.everyMinute, // 繰り返し間隔を設定
+      tz.TZDateTime.now(local).add(repeatInterval),
       platformChannelSpecifics,
       androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time, // 繰り返し間隔を設定
     );
   }
 
