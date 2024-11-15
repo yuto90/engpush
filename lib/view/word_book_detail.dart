@@ -160,7 +160,7 @@ class WordBookDetailPageState extends ConsumerState<WordBookDetailPage> {
                               Expanded(
                                 child: TextButton(
                                   onPressed: () {
-                                    viewModel.cancelReminder();
+                                    viewModel.cancelAllReminder();
                                   },
                                   child: const Text('リマインダーを解除'),
                                 ),

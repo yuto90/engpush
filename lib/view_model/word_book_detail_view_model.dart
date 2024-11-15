@@ -51,6 +51,8 @@ class WordBookDetailViewModel {
       seconds: reminder.time == 2 ? reminder.number : 0,
     );
 
+    // todo: 任意の間隔で通知を繰り返す
+    // 現状1分毎固定
     iosLocalPush.scheduleRepeatingNotification(
       '繰り返し通知タイトル',
       '繰り返し通知内容',
@@ -61,6 +63,11 @@ class WordBookDetailViewModel {
 
   void cancelReminder() {
     iosLocalPush.cancelNotification(0);
+    print('リマインダーを解除しました');
+  }
+
+  void cancelAllReminder() {
+    iosLocalPush.cancelAllNotifications();
     print('リマインダーを解除しました');
   }
 
